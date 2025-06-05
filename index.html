@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ball & Strike Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+      background: #f8f9fa;
+    }
+    h1 {
+      color: #007bff;
+    }
+    input {
+      font-size: 16px;
+      padding: 8px;
+      margin: 10px;
+      width: 120px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    .log {
+      margin-top: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🎯 Ball & Strike Game</h1>
+<p>Guess the 4-digit number (no repeating digits)</p>
+
+<input id="guessInput" type="text" maxlength="4" placeholder="1234">
+<button onclick="checkGuess()">Guess</button>
+
+<div class="log" id="log"></div>
+
+<script>
+  let secretNumber = generateSecret();
+  let attempts = 0;
+
+  function generateSecret() {
+    let digits = [];
+    while (digits.length < 4) {
+      let d = Math.floor(Math.random() * 10).toString();
+      if (!digits.includes(d)) digits.push(d);
+    }
+    return digits.join('');
+  }
+
+  function checkGuess() {
+    const guess = document.getElementById("guessInput").value;
+    if (!/^\d{4}$/.test(guess) || new Set(guess).size !== 4) {
+      alert("Enter a 4-digit number with unique digits.");
+      return;
+    }
+
+    attempts++;
+    let balls = 0;
+    let strikes = 0;
+
+    for (let i = 0; i < 4; i++) {
+      if (guess[i] === secretNumber[i]) {
+        strikes++;
+      } else if (secretNumber.includes(guess[i])) {
+        balls++;
+      }
+    }
+
+    const logDiv = document.getElementById("log");
+    logDiv.innerHTML += `<p>Guess ${attempts}: ${guess} ➤ ${balls} Ball(s), ${strikes} Strike(s)</p>`;
+
+    if (strikes === 4) {
+      logDiv.innerHTML += `<h3>🎉 You guessed it in ${attempts} tries!</h3>`;
+      document.querySelector("button").disabled = true;
+    }
+
+    document.getElementById("guessInput").value = '';
+    document.getElementById("guessInput").focus();
+  }
+</script>
+
+</body>
+</html>
